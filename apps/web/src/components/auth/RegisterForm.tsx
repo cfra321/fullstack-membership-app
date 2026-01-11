@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 
 import { api, ApiError } from '../../lib/api';
 import { isValidEmail } from '../../lib/utils';
+import { useAuth } from './AuthProvider';
 
 /**
  * Form field errors.
@@ -70,6 +71,7 @@ function validatePassword(password: string): PasswordValidation {
  */
 export function RegisterForm() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
@@ -132,8 +134,17 @@ export function RegisterForm() {
         password,
       });
 
-      // Redirect to login on success
-      router.push('/login');
+      // Auto-login after successful registration
+      await api.post('/api/auth/login', {
+        email: email.trim(),
+        password,
+      });
+
+      // Refresh user data to update auth state
+      await refreshUser();
+
+      // Redirect to dashboard
+      router.push('/dashboard');
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.fields) {
