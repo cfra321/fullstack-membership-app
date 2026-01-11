@@ -8,12 +8,15 @@ A fullstack membership-based web application with tiered content access, OAuth a
 # 1. Install dependencies
 npm install
 
-# 2. Set up environment variables
+# 2. Build shared package
+npm run build:shared
+
+# 3. Set up environment variables
 cp .env.example apps/api/.env
 cp .env.example apps/web/.env.local
 # Edit the .env files with your credentials
 
-# 3. Start development servers
+# 4. Start development servers
 npm run dev
 ```
 

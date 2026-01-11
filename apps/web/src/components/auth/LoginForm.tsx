@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 
 import { api, ApiError } from '../../lib/api';
 import { isValidEmail } from '../../lib/utils';
+import { useAuth } from './AuthProvider';
 
 /**
  * Form field errors.
@@ -29,6 +30,7 @@ interface FormErrors {
  */
 export function LoginForm() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -73,6 +75,9 @@ export function LoginForm() {
         email: email.trim(),
         password,
       });
+
+      // Refresh user data to update auth state
+      await refreshUser();
 
       // Redirect to dashboard on success
       router.push('/dashboard');
