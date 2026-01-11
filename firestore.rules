@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Firestore Security Rules for Astronacci Membership App
+//
+// IMPORTANT: This application uses backend-only access via Firebase Admin SDK.
+// All client access is denied. The Admin SDK bypasses these rules entirely.
+//
+// This configuration ensures:
+// - No direct client read/write access to any data
+// - All data access goes through the Express.js backend
+// - Session management, quota enforcement, and authentication are server-side
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Deny all client access by default
+    // The Firebase Admin SDK (used by our Express backend) bypasses these rules
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Note: The following collections are managed by the backend:
+    //
+    // users/{userId}
+    //   - User profiles with membership type
+    //   - Created on registration/OAuth sign-in
+    //
+    // sessions/{sessionToken}
+    //   - Server-side session storage
+    //   - Created on login, deleted on logout
+    //
+    // usage/{userId}
+    //   - Content access tracking per user
+    //   - Updated when user accesses new content
+    //
+    // articles/{articleId}
+    //   - Article content with preview and full text
+    //   - Seeded by admin/seed script
+    //
+    // videos/{videoId}
+    //   - Video metadata with URLs
+    //   - Seeded by admin/seed script
+  }
+}
